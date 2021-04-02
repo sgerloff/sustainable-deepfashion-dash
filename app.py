@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import numpy as np
 
-from src.inference import distance, ModelInference
+from sustainable-deepfashion-dash.src.inference import distance, ModelInference
 
 import plotly.graph_objects as go
 
