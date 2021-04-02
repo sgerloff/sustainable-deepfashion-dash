@@ -19,7 +19,7 @@ class LayoutFactory:
                  web=False):
         self.model, self.prediction_df, self.pca_components = load_components_from_basename(basename)
         self.number_of_pca_sliders = number_of_pca_sliders
-        self.number_of_best_predictions=number_of_best_predictions
+        self.number_of_best_predictions = number_of_best_predictions
         self.web = web
 
     def get_sliders_input(self):
@@ -28,23 +28,39 @@ class LayoutFactory:
     def get_layout(self):
         layout = html.Div(className="container",
                           children=[
-                              html.Div(className="menu-container",
-                                       children=[
-                                           html.H4(id="title", children=["Sustainable Deepfashion"]),
-                                           html.P(id="description", children=[
-                                               "This is a description, that is very long... In fact, it is so long that it spans over multile lines"]),
-                                           self.build_upload_layout(),
-                                           dcc.Graph(id="embedding-plot", config={"displayModeBar": False})
-                                       ]),
-                              html.Div(className="prediction-container",
-                                       children=[
-                                           html.Div(id="prediction-box", children=[
-                                               html.Div(id='output-image-prediction'),
-                                               html.Div(id='slider-container', children=self.build_sliders())
-                                           ])
-                                       ])
+                              self.build_menu_container(),
+                              self.build_prediction_container()
                           ])
         return layout
+
+    def build_menu_container(self):
+        return html.Div(className="menu-container",
+                        children=[
+                            self.build_title(),
+                            self.build_description(),
+                            self.build_upload_layout(),
+                            dcc.Graph(id="embedding-plot", config={"displayModeBar": False})
+                        ])
+
+    def build_title(self):
+        return html.H4(id="title", children=["Sustainable Deepfashion"])
+
+    def build_description(self):
+        return html.P(id="description", children=[
+            """
+            This is a description, that is very long... 
+            In fact, it is so long that it spans over multile lines
+            """
+        ])
+
+    def build_prediction_container(self):
+        return html.Div(className="prediction-container",
+                        children=[
+                            html.Div(id="prediction-box", children=[
+                                html.Div(id='output-image-prediction'),
+                                html.Div(id='slider-container', children=self.build_sliders())
+                            ])
+                        ])
 
     def build_upload_layout(self):
         children = []
@@ -72,7 +88,6 @@ class LayoutFactory:
                 )
             )
         return children
-
 
     def build_prediction_gallery(self, top_k_pred_base64):
         list_of_images = []
@@ -132,8 +147,8 @@ class LayoutFactory:
         else:
             top_k_pred = self.prediction_df.sort_values(by="distance", ascending=True)["image"].head(
                 self.number_of_best_predictions).to_list()
-            top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode()) for
+            top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode())
+                                 for
                                  file in top_k_pred]
 
         return self.build_prediction_gallery(top_k_pred_images), self.update_embedding_plot(embedding)
-
