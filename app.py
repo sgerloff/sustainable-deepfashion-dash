@@ -3,14 +3,11 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 
-import base64, os
+import os
 
-import numpy as np
 import pandas as pd
 
 from src.inference import *
-
-# from sklearn.decomposition import PCA
 
 import plotly.graph_objects as go
 
