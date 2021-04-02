@@ -46,7 +46,7 @@ class ModelInference:
         self.preprocessor, self.input_shape = self.get_model_specifics()
 
     def get_model_specifics(self):
-        return (lambda x: (x/127.5)-1.), (224,224,3)
+        return (lambda x: (x / 127.5) - 1.), (224, 224, 3)
 
     def predict(self, base64_string):
         array = convert_base64_string_to_array(base64_string)
@@ -61,8 +61,6 @@ class ModelInference:
 
     def get_metric(self):
         return "angular"
-
-
 
 
 basename = "simple_conv2d_embedding_size_16_angular_d-0"
@@ -92,6 +90,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
+
 def build_upload_layout():
     children = []
     children.append(
@@ -120,6 +119,7 @@ def build_sliders():
         )
     return children
 
+
 def build_layout():
     layout = html.Div(className="container",
                       children=[
@@ -140,9 +140,6 @@ def build_layout():
                                    ])
                       ])
     return layout
-
-
-
 
 
 app.layout = html.Div(build_layout())
@@ -171,7 +168,8 @@ def predict_from_contents(contents, values):
     else:
         top_k_pred = prediction_df.sort_values(by="distance", ascending=True)["image"].head(
             NUMBER_OF_BEST_PREDICTIONS).to_list()
-        top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode()) for file in top_k_pred]
+        top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode()) for
+                             file in top_k_pred]
 
     return build_prediction_gallery(top_k_pred_images), update_embedding_plot(embedding)
 
@@ -223,9 +221,11 @@ def build_prediction_gallery(top_k_pred_base64):
               slider_input)
 def update_output(contents, *values):
     if contents is not None:
-        return parse_upload(contents), *predict_from_contents(contents, values)
+        output_gallery, embedding_plot = predict_from_contents(contents, values)
+        return parse_upload(contents), output_gallery, embedding_plot
     else:
-        return html.Img(id="default-image", src="assets/default.jpeg"), None, update_embedding_plot(np.zeros((EMBEDDING_SIZE)))
+        return html.Img(id="default-image", src="assets/default.jpeg"), None, update_embedding_plot(
+            np.zeros((EMBEDDING_SIZE)))
 
 
 if __name__ == '__main__':
