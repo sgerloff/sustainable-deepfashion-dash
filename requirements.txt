@@ -1,5 +1,6 @@
 tensorflow-cpu
 dash
 pandas
+numpy
 gunicorn
 pillow
