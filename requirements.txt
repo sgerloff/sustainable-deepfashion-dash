@@ -1,0 +1,5 @@
+tensorflow-cpu
+dash
+pandas
+gunicorn
+pillow
