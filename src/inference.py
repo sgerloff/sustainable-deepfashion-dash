@@ -35,6 +35,7 @@ class ModelInference:
 
     def get_model_specifics(self):
         return (lambda x: (x/127.5)-1.), (224,224,3)
+        # return (lambda x: x/255.), (224,224,3)
 
     def predict(self, base64_string):
         array = convert_base64_string_to_array(base64_string)
@@ -45,7 +46,11 @@ class ModelInference:
         image = self.preprocessor(image)
 
         pred = self.embedding_extractor(image)
-        return pred["sequential_1"].numpy()
+
+        if "sequential_1" in pred.keys():
+            return pred["sequential_1"].numpy()
+        if "sampling" in pred.keys():
+            return pred["sampling"].numpy()
 
     def get_metric(self):
         return "angular"

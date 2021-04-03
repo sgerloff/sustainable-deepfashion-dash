@@ -1,44 +1,52 @@
-A {
-    text-color: blue;
-}
-
 #title {
+    width: 100%;
     text-align: center;
-    margin-top: 1cm;
-    margin-bottom: 1cm;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 400;
+    font-size: Huge;
 }
 
 #description {
     margin: 10px;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 15px;
+    color: #555456;
 }
 
 #upload-layout {
     width: 100%;
 }
 
-#upload-image-box {
-    width: 90%;
-    min-height: 60px;
-    min-line-height: 60px;
-    border-width: 1px;
-    border-style: dashed;
-    border-radius: 5px;
-    text-align: left;
+#embedding-plot-container {
+    width: 40%;
+    position: absolute;
+    top: 10%;
+    right: -4%;
+}
+
+.upload-image {
+    width: 40%;
+    object-fit: cover;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 20px;
+    border-color: #999999;
+    text-align: center;
     margin: auto;
-    padding: 10px;
-    margin-bottom: 1cm;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+#select-description {
+    font-family: 'Noto Sans', sans-serif;
+    color: #999999;
+    font-size: 20px;
 }
 
 #drag-box {
     position: relative;
-}
-
-#upload-image {
-    max-width: 6cm;
-}
-
-#default-image {
-    max-width:6cm
 }
 
 #output-image-upload {
@@ -51,14 +59,18 @@ A {
 
 #output-image-prediction {
     width: 100%;
-    min-height: 10cm;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    height: 200px;
+    /*min-height: 10cm;*/
 }
 
 #prediction-img {
-    max-height: 100%;
-    min-width: 100%;
+    max-height: 200px;
+    /*min-width: 100%;
     object-fit: cover;
-    vertical-align: bottom;
+    vertical-align: bottom;*/
 }
 
 ul {
@@ -75,9 +87,9 @@ li {
 }
 
 #prediction-box{
-    width: 70%;
+    /*width: 70%;
     position: absolute;
     top: 50%;
     -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    transform: translateY(-50%);*/
 }

@@ -29,7 +29,8 @@ class LayoutFactory:
         layout = html.Div(className="container",
                           children=[
                               self.build_menu_container(),
-                              self.build_prediction_container()
+                              self.build_prediction_container(),
+                              html.Div(id='slider-container', children=self.build_sliders())
                           ])
         return layout
 
@@ -38,8 +39,13 @@ class LayoutFactory:
                         children=[
                             self.build_title(),
                             self.build_description(),
-                            self.build_upload_layout(),
-                            dcc.Graph(id="embedding-plot", config={"displayModeBar": False})
+                            html.Center(
+                                className="upload-image-container",
+                                children=[
+                                self.build_upload_layout(),
+                                html.Div(id="embedding-plot-container")
+                            ])
+                            # html.Div(id="embedding-plot-container"),
                         ])
 
     def build_title(self):
@@ -54,28 +60,23 @@ class LayoutFactory:
         ])
 
     def build_prediction_container(self):
-        return html.Div(className="prediction-container",
-                        children=[
-                            html.Div(id="prediction-box", children=[
-                                html.Div(id='output-image-prediction'),
-                                html.Div(id='slider-container', children=self.build_sliders())
-                            ])
-                        ])
+        return html.Div(id="prediction-box", children=[
+            html.Div(id='output-image-prediction'),
+            # html.Div(id='slider-container', children=self.build_sliders())
+        ])
 
     def build_upload_layout(self):
         children = []
         children.append(
             dcc.Upload(
                 id='upload-image-box',
-                children=html.Div(id="drag_box", children=[
-                    'Drag and Drop or ',
-                    html.A('Select Files'),
-                    html.Div(id="output-image-upload")
-                ]),
                 multiple=False
             )
         )
         return html.Div(id="upload-layout", children=children)
+
+    def build_default_image(self):
+        return html.Img(className="upload-image", src="assets/default.jpeg")
 
     def build_sliders(self):
         children = []
@@ -104,9 +105,22 @@ class LayoutFactory:
         children = [html.Ul(children=list_of_images)]
         return children
 
+    def build_simple_gallery(self, top_k_pred_base64):
+        list_of_images = []
+        for img in top_k_pred_base64:
+            list_of_images.append(
+                html.Img(
+                    id="prediction-img",
+                    src=img
+                )
+            )
+
+        children = [html.Ul(children=list_of_images)]
+        return list_of_images
+
     @staticmethod
     def build_uploaded_image(contents):
-        return [html.Center(html.Img(id="upload-image", src=contents))]
+        return html.Img(className="upload-image", src=contents)
 
     @staticmethod
     def update_embedding_plot(embedding_vector):
@@ -115,7 +129,7 @@ class LayoutFactory:
             theta=[360. * i / embedding_vector.shape[0] for i in range(embedding_vector.shape[0])],
             marker_line_color="black",
             marker_line_width=1,
-            opacity=1.0,
+            opacity=1.0
         ))
 
         fig.update_layout(
@@ -128,7 +142,7 @@ class LayoutFactory:
             )
         )
         fig.update_polars(bgcolor="rgba(0,0,0,0)")
-        return fig
+        return dcc.Graph(id="embedding-plot", figure=fig, config={"displayModeBar": False})
 
     def predict_from_contents(self, contents, values):
         embedding = self.model.predict(contents)
@@ -147,8 +161,9 @@ class LayoutFactory:
         else:
             top_k_pred = self.prediction_df.sort_values(by="distance", ascending=True)["image"].head(
                 self.number_of_best_predictions).to_list()
+            print(top_k_pred)
             top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode())
                                  for
                                  file in top_k_pred]
 
-        return self.build_prediction_gallery(top_k_pred_images), self.update_embedding_plot(embedding)
+        return self.build_simple_gallery(top_k_pred_images), self.update_embedding_plot(embedding)
