@@ -26,7 +26,7 @@ class LayoutFactory:
         return [Input(f"pca_slider_{i}", "value") for i in range(self.number_of_pca_sliders)]
 
     def get_layout(self):
-        layout = html.Div(className="container",
+        layout = html.Div(className="app_container",
                           children=[
                               self.build_menu_container(),
                               self.build_prediction_container(),
@@ -106,12 +106,12 @@ class LayoutFactory:
 
         for i in range(self.number_of_pca_sliders):
             children.append(
-                dcc.Slider(
+                html.Center(dcc.Slider(
                     id=f"pca_slider_{i}",
                     min=-1., max=1., step=0.1, value=0.0,
                     tooltip={"always_visible": False, "placement": "bottom"},
                     marks=mark_dict[i]
-                )
+                ))
             )
         return children
 
@@ -160,7 +160,6 @@ class LayoutFactory:
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             margin=dict(l=0, r=0, b=0, t=0),
-            height=250,
             polar=dict(
                 radialaxis=dict(showticklabels=False, ticks='', showgrid=False, showline=False),
                 angularaxis=dict(showticklabels=False, ticks='', showgrid=False, showline=False)

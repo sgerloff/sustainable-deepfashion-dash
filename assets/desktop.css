@@ -1,10 +1,11 @@
 @media (min-width: 1000px) {
-    .container{
+    .app_container{
         /*display: flex;
         flex-wrap: wrap;*/
+        /*display: flex;*/
         margin: auto;
-        width: 100%;
         max-width: 28cm;
+        /*max-width: 20cm;*/
         height: 100%;
         bottom: 0;
         top: 0;
@@ -27,8 +28,10 @@
     .upload-image-container {
         display: flex;
         justify-content: flex-start;
+        position: relative;
         width: 62%;
         margin: 0;
+        overflow: hidden;
     }
 
     .prediction-container{
@@ -42,6 +45,12 @@
         margin-top: 10px;
     }
 
+    #pca_slider_0, #pca_slider_1, #pca_slider_2 {
+        margin-top: 0.5cm;
+        width: 45%;
+        transform: scale(1.5);
+    }
+
     #title {
         position: sticky;
         width: 100%;
@@ -52,7 +61,7 @@
         padding-bottom: 10px;
         font-family: 'Noto Sans', sans-serif;
         font-weight: 700;
-        font-size: 30px;
+        font-size: 60px;
         border-radius: 0 0 5px 5px;
         background-color: #393C3D;
         color: #E1ECF2;
@@ -73,15 +82,19 @@
 
     #embedding-plot-container {
         width: 50%;
-        /*position: absolute;
-        top: 5%;
-        right: -5%;*/
+        max-width: 15vw;
+        max-height: 10vw;
+        position: absolute;
+        top: -20%;
+        right: 0%;
     }
 
     .upload-image {
-        width: 40%;
+        width: 50%;
         /*max-height: 6cm;
         max-width: 6cm;*/
+        max-width: 25vw;
+        max-height: 25vw;
         object-fit: cover;
         border-width: 2px;
         border-style: solid;
@@ -113,12 +126,13 @@
     #output-image-prediction {
         width: 100%;
         display: flex;
-        height: 200px;
+        height: 15vw;
         overflow-x: scroll;
     }
 
     #prediction-img {
-        max-height: 200px;
+        height: 100%;
+        object-fit: cover;
     }
 
 /*

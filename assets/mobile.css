@@ -1,14 +1,16 @@
 @media (max-width: 1000px) {
-    .container{
+    .app-container{
         /*display: flex;
         flex-wrap: wrap;*/
-        margin: auto;
+        position: fixed;
         width: 100%;
         height: 100%;
         bottom: 0;
         top: 0;
         right: 0;
         left: 0;
+        margin-left: 0;
+        margin-right: 0;
         padding-left: 0;
         padding-right: 0;
         overflow-x: hidden;
@@ -19,11 +21,14 @@
     .menu-container{
         width: 100%;
         overflow-x: hidden;
+        /*overflow-y: hidden;*/
     }
 
     .upload-image-container {
         width: 100%;
+        position: relative;
         margin: 0;
+        overflow: hidden;
     }
 
     .prediction-container{
@@ -36,6 +41,11 @@
         width: 100%;
         margin-top: 10px;
     }
+    #pca_slider_0, #pca_slider_1, #pca_slider_2 {
+        margin-top: 10vw;
+        width: 30%;
+        transform: scale(3.0);
+    }
 
     #title {
         position: sticky;
@@ -47,16 +57,16 @@
         padding-bottom: 10px;
         font-family: 'Noto Sans', sans-serif;
         font-weight: 700;
-        font-size: 25px;
+        font-size: 60px;
         border-radius: 0 0 5px 5px;
         background-color: #393C3D;
         color: #E1ECF2;
     }
 
     .description {
-        margin: 10px;
+        margin: 20px;
         font-family: 'Noto Sans', sans-serif;
-        font-size: small;
+        font-size: 38px;
         text-align: justify;
         color: #393C3D;
     }
@@ -66,14 +76,17 @@
     }
 
     #embedding-plot-container {
-        width: 40%;
+        width: 50%;
         position: absolute;
-        top: 10%;
-        right: 0;
+        min-height: 50vw;
+        top: 20%;
+        right: -5%;
     }
 
     .upload-image {
-        width: 40%;
+        width: 50%;
+        max-height:50vw;
+        max-width:80vw;
         object-fit: cover;
         border-width: 2px;
         border-style: solid;
@@ -105,12 +118,13 @@
     #output-image-prediction {
         width: 100%;
         display: flex;
-        height: 200px;
+        height: 50vw;
         overflow-x: scroll;
     }
 
     #prediction-img {
-        max-height: 200px;
+        height: 100%;
+        object-fit: cover;
     }
 
 /*
