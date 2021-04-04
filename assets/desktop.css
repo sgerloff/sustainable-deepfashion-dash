@@ -45,11 +45,11 @@
         margin-top: 10px;
     }
 
-    #pca_slider_0, #pca_slider_1, #pca_slider_2 {
+    /*#pca_slider_0, #pca_slider_1, #pca_slider_2 {
         margin-top: 0.5cm;
         width: 45%;
         transform: scale(1.5);
-    }
+    }*/
 
     #title {
         position: sticky;
