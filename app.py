@@ -26,7 +26,7 @@ basename = "simple_conv2d_embedding_size_16_angular_d-0"
 layout_factory = LayoutFactory(basename,
                                number_of_pca_sliders=3,
                                number_of_best_predictions=10,
-                               web=False)
+                               web=True)
 app.layout = layout_factory.get_layout()
 
 

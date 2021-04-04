@@ -186,7 +186,6 @@ class LayoutFactory:
         else:
             top_k_pred = self.prediction_df.sort_values(by="distance", ascending=True)["image"].head(
                 self.number_of_best_predictions).to_list()
-            print(top_k_pred)
             top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode())
                                  for
                                  file in top_k_pred]
