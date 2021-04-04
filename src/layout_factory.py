@@ -42,9 +42,9 @@ class LayoutFactory:
                             html.Center(
                                 className="upload-image-container",
                                 children=[
-                                self.build_upload_layout(),
-                                html.Div(id="embedding-plot-container")
-                            ])
+                                    self.build_upload_layout(),
+                                    html.Div(id="embedding-plot-container")
+                                ])
                             # html.Div(id="embedding-plot-container"),
                         ])
 
@@ -52,18 +52,22 @@ class LayoutFactory:
         return html.H4(id="title", children=["Sustainable Deepfashion"])
 
     def build_description(self):
-        return html.P(id="description", children=[
+        return html.P(className="description", children=[
             """
-            This is a description, that is very long... 
-            In fact, it is so long that it spans over multile lines
+            Upload an image of a short-sleeved top to get alternatives from second-hand sources.
+            Simply press the button or drag and drop:
             """
         ])
 
     def build_prediction_container(self):
         return html.Div(id="prediction-box", children=[
+            html.P(className="description", id="demo-description"),
             html.Div(id='output-image-prediction'),
             # html.Div(id='slider-container', children=self.build_sliders())
         ])
+
+    def build_demo_description(self):
+        return [f"Top {self.number_of_best_predictions} second-hand alternatives:"]
 
     def build_upload_layout(self):
         children = []
@@ -79,13 +83,34 @@ class LayoutFactory:
         return html.Img(className="upload-image", src="assets/default.jpeg")
 
     def build_sliders(self):
-        children = []
+        children = [
+            html.P(className="description", children=[
+                "Modify your predictions:"
+            ])
+        ]
+
+        mark_dict = {
+            0: {
+                -1: "darker",
+                1: "brighter"
+            },
+            1: {
+                -1: "unknown",
+                1: "unknown"
+            },
+            2: {
+                -1: "unknown",
+                1: "unknown"
+            }
+        }
+
         for i in range(self.number_of_pca_sliders):
             children.append(
                 dcc.Slider(
                     id=f"pca_slider_{i}",
-                    min=-1., max=1., step=0.01, value=0.0,
-                    tooltip={"always_visible": False, "placement": "bottom"}
+                    min=-1., max=1., step=0.1, value=0.0,
+                    tooltip={"always_visible": False, "placement": "bottom"},
+                    marks=mark_dict[i]
                 )
             )
         return children
@@ -115,7 +140,6 @@ class LayoutFactory:
                 )
             )
 
-        children = [html.Ul(children=list_of_images)]
         return list_of_images
 
     @staticmethod
@@ -127,14 +151,15 @@ class LayoutFactory:
         fig = go.Figure(go.Barpolar(
             r=[e + 1. for e in embedding_vector.tolist()],
             theta=[360. * i / embedding_vector.shape[0] for i in range(embedding_vector.shape[0])],
-            marker_line_color="black",
+            marker_line_color="#393C3D",
             marker_line_width=1,
-            opacity=1.0
+            marker_color="#1DA1F2",
+            opacity=0.8
         ))
 
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
-            margin=dict(l=1, r=1, b=0, t=0),
+            margin=dict(l=0, r=0, b=0, t=0),
             height=250,
             polar=dict(
                 radialaxis=dict(showticklabels=False, ticks='', showgrid=False, showline=False),

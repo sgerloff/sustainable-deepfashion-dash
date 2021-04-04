@@ -25,7 +25,7 @@ basename = "simple_conv2d_embedding_size_16_angular_d-0"
 # basename = "VAE_conv2d_input_224_embedding_512"
 layout_factory = LayoutFactory(basename,
                                number_of_pca_sliders=3,
-                               number_of_best_predictions=6,
+                               number_of_best_predictions=10,
                                web=False)
 app.layout = layout_factory.get_layout()
 
@@ -33,17 +33,18 @@ app.layout = layout_factory.get_layout()
 @app.callback([Output('upload-image-box', 'children'),
                Output('output-image-prediction', 'children'),
                Output("embedding-plot-container", "children"),
-               Output("slider-container", "style")],
+               Output("slider-container", "style"),
+               Output("demo-description", "children")],
               Input('upload-image-box', 'contents'),
               layout_factory.get_sliders_input())
 def update_output(contents, *values):
     if contents is not None:
         output_gallery, embedding_plot = layout_factory.predict_from_contents(contents, values)
-        return layout_factory.build_uploaded_image(contents), output_gallery, embedding_plot, {'display': 'block'}
+        return layout_factory.build_uploaded_image(contents), output_gallery, embedding_plot, {'display': 'block'}, layout_factory.build_demo_description()
     else:
         # return html.Img(id="default-image", src="assets/default.jpeg"), None, layout_factory.update_embedding_plot(
             # np.zeros((layout_factory.pca_components.shape[1])))
-        return layout_factory.build_default_image(), None, None, {'display': 'none'}
+        return layout_factory.build_default_image(), None, None, {'display': 'none'}, None
 
 
 

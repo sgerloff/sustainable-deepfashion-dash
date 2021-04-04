@@ -1,18 +1,21 @@
 @media (min-width: 768px) {
     .container{
-        display: flex;
-        margin: auto;
-        position: absolute;
         width: 28cm;
+        margin: auto;
+        height: 100%;
         bottom: 0;
-        left: 0;
-        right: 0;
         top: 0;
+        right: 0;
+        left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        overflow: auto;
+        /*background-color: #F0F0F0;*/
     }
 
     .menu-container{
         background-color: #F0F0F0;
-        width: 12cm;
+        width: 100%;
         overflow: auto;
     }
 
@@ -21,56 +24,20 @@
         overflow: hidden;
     }
 
-    .vertical-center{
+ /*   .vertical-center{
         margin: 0;
         position: absolute;
         top: 50%;
         -ms-transform: translateY(-50%);
         transform: translateY(-50%);
-    }
+    }*/
 }
 
-body {
+/*body {
     background-color: #F0F0F0;
-}
+}*/
 
-.container{
-    /*display: flex;
-    flex-wrap: wrap;*/
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding-left: 0;
-    padding-right: 0;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    background-color: #F0F0F0;
-}
 
-.menu-container{
-    width: 100%;
-    /*display: flex;
-    flex-flow: row wrap;
-    justify-content: center;*/
-}
+@media (max-width: 768px) {
 
-.upload-image-container {
-    width: 100%;
-    /*display: flex;*/
-}
-
-.prediction-container{
-    flex-grow: 1;
-    width: 100%;
-    background-color: red;
-    overflow-y: scroll;
-}
-
-#slider-container{
-    width: 100%;
-    /*background-color: red;*/
 }
