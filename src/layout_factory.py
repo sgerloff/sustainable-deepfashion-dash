@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from dash.dependencies import Input
 
 import numpy as np
-import base64
+import base64, joblib
 
 from src.utility import load_components_from_basename
 from src.inference import distance
@@ -14,16 +14,21 @@ from src.inference import distance
 class LayoutFactory:
     def __init__(self,
                  basename,
-                 number_of_pca_sliders=3,
+                 number_of_pca_sliders=1,
                  number_of_best_predictions=6,
                  web=False):
+        self.pattern_sliders = joblib.load("slider_direction_dict.joblib")
+        self.pattern_directions = [np.expand_dims(v, axis=0) for _, v in self.pattern_sliders.items()]
+
         self.model, self.prediction_df, self.pca_components = load_components_from_basename(basename)
         self.number_of_pca_sliders = number_of_pca_sliders
         self.number_of_best_predictions = number_of_best_predictions
         self.web = web
 
     def get_sliders_input(self):
-        return [Input(f"pca_slider_{i}", "value") for i in range(self.number_of_pca_sliders)]
+        sliders = [Input(f"pca_slider_{i}", "value") for i in range(self.number_of_pca_sliders)]
+        sliders.extend([Input(f"{k}_slider", "value") for k in self.pattern_sliders.keys()])
+        return sliders
 
     def get_layout(self):
         layout = html.Div(className="app_container",
@@ -91,8 +96,8 @@ class LayoutFactory:
 
         mark_dict = {
             0: {
-                -1: "darker",
-                1: "brighter"
+                -1: "brighter",
+                1: "darker"
             },
             1: {
                 -1: "unknown",
@@ -113,6 +118,18 @@ class LayoutFactory:
                     marks=mark_dict[i]
                 ))
             )
+
+        for k in self.pattern_sliders.keys():
+            children.append(
+                html.Center(dcc.Slider(
+                    id=f"{k}_slider",
+                    min=0, max=2., step=0.1, value=0.0,
+                    tooltip={"always_visible": False, "placement": "bottom"},
+                    marks={0: "original",
+                           2: k}
+                ))
+            )
+
         return children
 
     def build_prediction_gallery(self, top_k_pred_base64):
@@ -172,7 +189,10 @@ class LayoutFactory:
         embedding = self.model.predict(contents)
 
         values = np.array(values).flatten()
-        embedding = embedding + np.dot(values, self.pca_components[:self.number_of_pca_sliders])
+        directions = [self.pca_components[:self.number_of_pca_sliders]]
+        directions.extend(self.pattern_directions)
+        directions = np.concatenate(directions)
+        embedding = embedding + np.dot(values, directions)
         embedding = embedding.flatten()
 
         self.prediction_df["distance"] = self.prediction_df["prediction"].apply(
