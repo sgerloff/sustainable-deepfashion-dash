@@ -194,6 +194,7 @@ class LayoutFactory:
         directions = np.concatenate(directions)
         embedding = embedding + np.dot(values, directions)
         embedding = embedding.flatten()
+        embedding = embedding/np.linalg.norm(embedding)
 
         self.prediction_df["distance"] = self.prediction_df["prediction"].apply(
             lambda x: distance(x, embedding, metric=self.model.get_metric())
