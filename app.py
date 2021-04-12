@@ -5,7 +5,7 @@ import dash_html_components as html
 import numpy as np
 from src.layout_factory import LayoutFactory
 
-
+import json
 
 external_stylesheets = [
     "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
@@ -30,22 +30,37 @@ layout_factory = LayoutFactory(basename,
 app.layout = layout_factory.get_layout()
 
 
-@app.callback([Output('upload-image-box', 'children'),
-               Output('output-image-prediction', 'children'),
-               Output("embedding-plot-container", "children"),
-               Output("slider-container", "style"),
-               Output("demo-description", "children")],
-              Input('upload-image-box', 'contents'),
-              layout_factory.get_sliders_input())
-def update_output(contents, *values):
+@app.callback([
+    Output("upload-image-box", "children"),
+    Output("intermediate-embedding", "children")
+],
+    Input("upload-image-box", "contents")
+)
+def update_upload(contents):
     if contents is not None:
-        output_gallery, embedding_plot = layout_factory.predict_from_contents(contents, values)
-        return layout_factory.build_uploaded_image(contents), output_gallery, embedding_plot, {'display': 'block'}, layout_factory.build_demo_description()
+        intermediate_embedding = layout_factory.infer_prediction_from_contents(contents)
+        return layout_factory.build_uploaded_image(contents), json.dumps(intermediate_embedding)
     else:
-        # return html.Img(id="default-image", src="assets/default.jpeg"), None, layout_factory.update_embedding_plot(
-            # np.zeros((layout_factory.pca_components.shape[1])))
-        return layout_factory.build_default_image(), None, None, {'display': 'none'}, None
+        return layout_factory.build_default_image(), None
 
+
+@app.callback(
+    [
+        Output('output-image-prediction', 'children'),
+        Output("embedding-plot-container", "children"),
+        Output("slider-container", "style"),
+        Output("demo-description", "children")
+    ],
+    Input('intermediate-embedding', 'children'),
+    layout_factory.get_sliders_input()
+)
+def update_predictions(children, *values):
+    if children is not None:
+        embedding = json.loads(children)
+        output_gallery, embedding_plot = layout_factory.predict_from_contents(embedding, values)
+        return output_gallery, embedding_plot, {'display': 'block'}, layout_factory.build_demo_description()
+    else:
+        return None, None, {'display': 'none'}, None
 
 
 if __name__ == '__main__':

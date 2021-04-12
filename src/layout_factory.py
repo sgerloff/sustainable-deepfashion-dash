@@ -17,6 +17,9 @@ class LayoutFactory:
                  number_of_pca_sliders=1,
                  number_of_best_predictions=6,
                  web=False):
+        self.content_embedding = None;
+        self.slider_values = None;
+
         self.pattern_sliders = joblib.load("slider_direction_dict.joblib")
         self.pattern_directions = [np.expand_dims(v, axis=0) for _, v in self.pattern_sliders.items()]
 
@@ -35,7 +38,8 @@ class LayoutFactory:
                           children=[
                               self.build_menu_container(),
                               self.build_prediction_container(),
-                              html.Div(id='slider-container', children=self.build_sliders())
+                              html.Div(id='slider-container', children=self.build_sliders()),
+                              html.Div(id="intermediate-embedding", style={"display": "none"})
                           ])
         return layout
 
@@ -75,14 +79,18 @@ class LayoutFactory:
         return [f"Top {self.number_of_best_predictions} second-hand alternatives:"]
 
     def build_upload_layout(self):
-        children = []
-        children.append(
+        children = [
             dcc.Upload(
                 id='upload-image-box',
                 multiple=False
             )
-        )
-        return html.Div(id="upload-layout", children=children)
+        ]
+
+        return html.Div(id="upload-layout", children=[
+            dcc.Loading(id="loading-upload",
+                        children=children,
+                        type="default")
+        ])
 
     def build_default_image(self):
         return html.Img(className="upload-image", src="assets/default.jpeg")
@@ -164,7 +172,7 @@ class LayoutFactory:
         return html.Img(className="upload-image", src=contents)
 
     @staticmethod
-    def update_embedding_plot(embedding_vector):
+    def build_embedding_plot(embedding_vector):
         fig = go.Figure(go.Barpolar(
             r=[e + 1. for e in embedding_vector.tolist()],
             theta=[360. * i / embedding_vector.shape[0] for i in range(embedding_vector.shape[0])],
@@ -185,29 +193,47 @@ class LayoutFactory:
         fig.update_polars(bgcolor="rgba(0,0,0,0)")
         return dcc.Graph(id="embedding-plot", figure=fig, config={"displayModeBar": False})
 
-    def predict_from_contents(self, contents, values):
-        embedding = self.model.predict(contents)
+    def predict_from_contents(self, embedding, values):
+        embedding = np.array(embedding)
 
+        embedding = self.add_slider_values(embedding, values)
+        self.compute_distances(embedding)
+
+        if self.web:
+            top_k_pred_images = self.get_top_k_img_from_web()
+        else:
+            top_k_pred_images = self.get_top_k_img_from_disk()
+
+        return self.build_simple_gallery(top_k_pred_images), self.build_embedding_plot(embedding)
+
+    def infer_prediction_from_contents(self, contents):
+        return self.model.predict(contents).flatten().tolist()
+
+    def add_slider_values(self, embedding, values):
         values = np.array(values).flatten()
+        directions = self.get_directions()
+
+        embedding_delta = np.dot(values, directions)
+        embedding = embedding + embedding_delta
+        embedding = embedding.flatten()
+        return embedding / np.linalg.norm(embedding)
+
+    def get_directions(self):
         directions = [self.pca_components[:self.number_of_pca_sliders]]
         directions.extend(self.pattern_directions)
-        directions = np.concatenate(directions)
-        embedding = embedding + np.dot(values, directions)
-        embedding = embedding.flatten()
-        embedding = embedding/np.linalg.norm(embedding)
+        return np.concatenate(directions)
 
+    def compute_distances(self, embedding):
         self.prediction_df["distance"] = self.prediction_df["prediction"].apply(
             lambda x: distance(x, embedding, metric=self.model.get_metric())
         )
 
-        if self.web:
-            top_k_pred_images = self.prediction_df.sort_values(by="distance", ascending=True)["web_image"].head(
-                self.number_of_best_predictions).to_list()
-        else:
-            top_k_pred = self.prediction_df.sort_values(by="distance", ascending=True)["image"].head(
-                self.number_of_best_predictions).to_list()
-            top_k_pred_images = ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode())
-                                 for
-                                 file in top_k_pred]
+    def get_top_k_img_from_web(self):
+        return self.prediction_df.sort_values(by="distance", ascending=True)["web_image"].head(
+            self.number_of_best_predictions).to_list()
 
-        return self.build_simple_gallery(top_k_pred_images), self.update_embedding_plot(embedding)
+    def get_top_k_img_from_disk(self):
+        top_k_pred = self.prediction_df.sort_values(by="distance", ascending=True)["image"].head(
+            self.number_of_best_predictions).to_list()
+        return ['data:image/jpeg;base64,{}'.format(base64.b64encode(open(file, 'rb').read()).decode()) for file in
+                top_k_pred]
