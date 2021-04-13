@@ -21,7 +21,7 @@ basename = "simple_conv2d_embedding_size_20_angular_d_augmented"
 layout_factory = LayoutFactory(basename,
                                number_of_pca_sliders=1,
                                number_of_best_predictions=10,
-                               web=True)
+                               web=False)
 
 app = dash.Dash(__name__,
                 external_stylesheets=external_stylesheets,

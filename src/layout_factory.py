@@ -45,7 +45,7 @@ class LayoutFactory:
                     ),
                     xs=12, md=12, lg=9
                 )
-            ]),
+            ], justify="center"),
             dbc.Row([
                 self.build_description(),
                 self.build_upload_layout(),
@@ -284,9 +284,6 @@ class LayoutFactory:
             )
 
         children = [
-            # html.Center([
-            #     html.H5("\U0001F814 Top-10 Second Hand Items \U0001F816"),
-            # ]),
             html.Div(id="prediction-container", children=list_of_images)
         ]
 
@@ -300,7 +297,9 @@ class LayoutFactory:
             marker_line_color="#051A29",
             marker_line_width=1,
             marker_color="#05CEB9",
-            opacity=0.8
+            opacity=0.8,
+            hovertext=[f"r{i} = {e:2f}" for i, e in enumerate(embedding_vector.tolist())],
+            hoverinfo="text"
         ))
 
         fig.update_layout(
