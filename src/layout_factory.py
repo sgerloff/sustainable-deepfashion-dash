@@ -222,10 +222,10 @@ class LayoutFactory:
 
     @staticmethod
     def build_embedding_plot_container():
-        return dbc.Col([
+        return dbc.Col(dcc.Loading([
             html.Center(html.H5(id="representation-description")),
             html.Div(id="embedding-plot-container", className="square-container")
-        ], xs=6, md=4, lg=3)
+        ]), xs=6, md=4, lg=3)
 
     def build_sliders(self):
         children = [

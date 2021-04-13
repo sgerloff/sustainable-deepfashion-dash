@@ -149,3 +149,14 @@ H5 {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
 }
+
+/*
+*[data-dash-is-loading="true"]{
+    visibility: hidden;
+}
+*[data-dash-is-loading="true"]::before{
+    content: "Loading...";
+    display: inline-block;
+    color: magenta;
+    visibility: visible;
+}*/
