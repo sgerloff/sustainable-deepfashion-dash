@@ -1,5 +1,6 @@
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
 from dash.dependencies import Input
@@ -34,71 +35,202 @@ class LayoutFactory:
         return sliders
 
     def get_layout(self):
-        layout = html.Div(className="app_container",
-                          children=[
-                              self.build_menu_container(),
-                              self.build_prediction_container(),
-                              html.Div(id='slider-container', children=self.build_sliders()),
-                              html.Div(id="intermediate-embedding", style={"display": "none"})
-                          ])
+        layout = html.Div(className="container-fluid", id="layout", children=[
+            self.build_title_logo(),
+            dbc.Row([
+                dbc.Col(
+                    dbc.Collapse(
+                        self.build_info_page(),
+                        id="learn-more-collapse"
+                    ),
+                    xs=12, md=12, lg=9
+                )
+            ]),
+            dbc.Row([
+                self.build_description(),
+                self.build_upload_layout(),
+                self.build_embedding_plot_container()
+            ], justify="center"),
+            dbc.Row([
+                dbc.Col(
+                    id="prediction-block"
+                )
+            ]),
+            dbc.Row(
+                dbc.Col(dbc.Card(id="slider-container", children=self.build_sliders()), xs=12, md=12, lg=9),
+                justify="center"
+            ),
+            html.Div(id="intermediate-embedding")
+        ])
         return layout
 
-    def build_menu_container(self):
-        return html.Div(className="menu-container",
-                        children=[
-                            self.build_title(),
-                            self.build_description(),
-                            html.Center(
-                                className="upload-image-container",
-                                children=[
-                                    self.build_upload_layout(),
-                                    html.Div(id="embedding-plot-container")
-                                ])
-                            # html.Div(id="embedding-plot-container"),
-                        ])
+    @staticmethod
+    def build_title_logo():
+        return dbc.Row(
+            id="title-row",
+            children=dbc.Col(
+                html.Center(
+                    html.A(
+                        html.Img(id="title-logo", src="assets/sustainable_deepfashion_title.png"),
+                        href="https://github.com/sgerloff/sustainable_deepfashion"
+                    )
+                ),
+                xs=6,
+                md=4,
+                lg=4,
+                xl=3
+            ),
+            justify="center"
+        )
 
-    def build_title(self):
-        return html.H4(id="title", children=["Sustainable Deepfashion"])
+    @staticmethod
+    def build_info_page():
+        return dbc.Card(
+            dbc.CardBody([
+                html.H5("Concept - What's Happening?"),
+                html.P(
+                    "Using deep-learning, we have trained a model to understand similarity between \
+                    short-sleeved tops. \
+                    Comparing an user-provided image to a database comprised of second-hand items, we \
+                    return the most similar sustainable alternatives. \
+                    Here, similarity refers to the prints, patterns and colors of the item, instead of \
+                    the angle, lighting and crop of the corresponding image. \
+                    Furthermore, we allow users to modify the resulting representations introduce new \
+                    features, like floral patterns, stripes and dots.",
+                    style={"text-align": "justify"}
+                ),
+                html.H5("Data - Where does it come from?"),
+                html.P(
+                    "All predictions are pulled from a small demo database, containing a random picture \
+                    of over 10000 different items from our training- and testing dataset. \
+                    Currently, it focuses on short-sleeved tops, but the approach can be easily generalized \
+                    to different categories.",
+                    style={"text-align": "justify"}
+                ),
+                html.P(
+                    "We use data from the Deepfashion2 dataset, pictures taken by ourselves, friends and family, \
+                    as well as pictures scraped from Vinted (a.k.a. Kleiderkreisel), a popular german platform \
+                    for second-hand fashion. \
+                    In total, our dataset contains up to 500.000 pictures of more then 10.000 items, with different \
+                    angles, framing, lighting and so on. \
+                    We have chosen this data to reflect the distribution of images that you could find on the second-\
+                    hand market.",
+                    style={"text-align": "justify"}
+                ),
+                html.H5("Model - How does it work?"),
+                html.P(
+                    "Our model is built with a custom architecture, containing five convolutional layers followed \
+                    by three dense layers. From input images the model predicts representation vectors embedded \
+                    into an 20-dimensional latent space. These representations have the property that their angular \
+                    distances are small if the images contain the same item and large if they differ. \
+                    The similarity between two items is then defined accordingly as the distance between the \
+                    representations vectors in latent space.",
+                    style={"text-align": "justify"}
+                ),
+                html.P(
+                    "This is achieved by training the model on the semi-hard triplet loss, which we have \
+                    implemented in Tensorflow and trained on GPU's provided by AWS and Google Cloud. \
+                    To find the best performing model, we compare the Top-K Accuracy of the model to retrieve \
+                    the matching item from a validation and test dataset. \
+                    To this end, we have explored pretrained models as feature extractors, different distance \
+                    metrics, other dimensionality of the latent space, and more.",
+                    style={"text-align": "justify"}
+                ),
+                html.H5("More - Who are we?"),
+                html.P(
+                    "We are three Data Scientists, that have met at Data Science Retreat and set out to improve \
+                    the second-hand fashion market. If you have questions, feedback or want to chat, please feel \
+                    free to contact us:",
+                    style={"text-align": "justify"}
+                ),
+                html.Ul([
+                    html.Li(html.A("Gert-Jan Dobbelaere", href="https://www.linkedin.com/in/gert-jan-dobbelaere/")),
+                    html.Li(html.A("Dr. Sascha Gerloff", href="https://www.linkedin.com/in/sascha-gerloff/")),
+                    html.Li(html.A("Sergio Vechi", href="https://www.linkedin.com/in/sergiovechi/"))
+                ]),
+                html.P(
+                    "If you want to learn more about the implementation details, or want to incorporate \
+                    some of our results into your own project, you can find all the source code at github:",
+                    style={"text-align": "justify"}
+                ),
+                html.Ul(html.Li(html.A(
+                    "https://github.com/sgerloff/sustainable_deepfashion",
+                    href="https://github.com/sgerloff/sustainable_deepfashion"
+                ))),
+                html.P("Interested how the dash app is build? We got you covered:", style={"text-align": "justify"}),
+                html.Ul(html.Li(html.A(
+                    "https://github.com/sgerloff/sustainable-deepfashion-dash",
+                    href="https://github.com/sgerloff/sustainable-deepfashion-dash"
+                )))
+            ], id="info-page"),
+            style={"margin-bottom": "15px"}
+        )
 
-    def build_description(self):
-        return html.P(className="description", children=[
-            """
-            Upload an image of a short-sleeved top to get alternatives from second-hand sources.
-            Simply press the button or drag and drop:
-            """
-        ])
-
-    def build_prediction_container(self):
-        return html.Div(id="prediction-box", children=[
-            html.P(className="description", id="demo-description"),
-            html.Div(id='output-image-prediction'),
-            # html.Div(id='slider-container', children=self.build_sliders())
-        ])
-
-    def build_demo_description(self):
-        return [f"Top {self.number_of_best_predictions} second-hand alternatives:"]
+    @staticmethod
+    def build_description():
+        return dbc.Col(
+            html.Div(
+                id="description-text",
+                children=[
+                    html.P("""
+                    Second-hand fashion solves many ethical- and environmental problems posed by the fast fashion industry. However, finding items that suit your style can be hard!
+                    """, style={"text-align": "justify"}),
+                    html.P("""
+                    This AI-powered app demonstrates how we can help! Simply upload an image of the desired style and get the best alternatives from second-hand sources.
+                    """, style={"text-align": "justify"}),
+                    dbc.Button(
+                        "Learn More",
+                        id="learn-more-button",
+                        className="mb-3"
+                    )
+                ]),
+            xs=12,
+            md=4,
+            lg=3
+        )
 
     def build_upload_layout(self):
-        children = [
-            dcc.Upload(
-                id='upload-image-box',
-                multiple=False
-            )
-        ]
+        return dbc.Col(
+            children=[
+                html.Center(html.H5("Upload")),
+                dcc.Loading(
+                    id="loading-upload",
+                    type="default",
+                    children=self.build_upload_image()
+                )
+            ],
+            xs=6, md=4, lg=3
+        )
 
-        return html.Div(id="upload-layout", children=[
-            dcc.Loading(id="loading-upload",
-                        children=children,
-                        type="default")
-        ])
+    @staticmethod
+    def build_upload_image():
+        return dcc.Upload(
+            id="upload-container",
+            multiple=False,
+            children=[
+                html.Div(className="square-container", id="square-upload-container")
+            ]
+        )
 
-    def build_default_image(self):
-        return html.Img(className="upload-image", src="assets/default.jpeg")
+    @staticmethod
+    def image_from_content(contents):
+        return html.Img(id="upload-image", src=contents)
+
+    @staticmethod
+    def upload_button():
+        return html.Img(id="upload-button", src="assets/plus-symbol.png")
+
+    @staticmethod
+    def build_embedding_plot_container():
+        return dbc.Col([
+            html.Center(html.H5(id="representation-description")),
+            html.Div(id="embedding-plot-container", className="square-container")
+        ], xs=6, md=4, lg=3)
 
     def build_sliders(self):
         children = [
-            html.P(className="description", children=[
-                "Modify your predictions:"
+            html.H5(className="description", children=[
+                "Modify and Explore:"
             ])
         ]
 
@@ -124,35 +256,21 @@ class LayoutFactory:
                     min=-1., max=1., step=0.1, value=0.0,
                     tooltip={"always_visible": False, "placement": "bottom"},
                     marks=mark_dict[i]
-                ))
+                ), className="single-slider-container")
             )
 
         for k in self.pattern_sliders.keys():
             children.append(
                 html.Center(dcc.Slider(
                     id=f"{k}_slider",
+                    className="pattern_slider",
                     min=0, max=2., step=0.1, value=0.0,
                     tooltip={"always_visible": False, "placement": "bottom"},
                     marks={0: "original",
                            2: k}
-                ))
+                ), className="single-slider-container")
             )
 
-        return children
-
-    def build_prediction_gallery(self, top_k_pred_base64):
-        list_of_images = []
-        for img in top_k_pred_base64:
-            list_of_images.append(
-                html.Li(
-                    html.Img(
-                        id="prediction-img",
-                        src=img
-                    )
-                )
-            )
-
-        children = [html.Ul(children=list_of_images)]
         return children
 
     def build_simple_gallery(self, top_k_pred_base64):
@@ -165,20 +283,23 @@ class LayoutFactory:
                 )
             )
 
-        return list_of_images
+        children = [
+            # html.Center([
+            #     html.H5("\U0001F814 Top-10 Second Hand Items \U0001F816"),
+            # ]),
+            html.Div(id="prediction-container", children=list_of_images)
+        ]
 
-    @staticmethod
-    def build_uploaded_image(contents):
-        return html.Img(className="upload-image", src=contents)
+        return children
 
     @staticmethod
     def build_embedding_plot(embedding_vector):
         fig = go.Figure(go.Barpolar(
             r=[e + 1. for e in embedding_vector.tolist()],
             theta=[360. * i / embedding_vector.shape[0] for i in range(embedding_vector.shape[0])],
-            marker_line_color="#393C3D",
+            marker_line_color="#051A29",
             marker_line_width=1,
-            marker_color="#1DA1F2",
+            marker_color="#05CEB9",
             opacity=0.8
         ))
 
