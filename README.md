@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://github.com/sgerloff/sustainable-deepfashion-dash/blob/main/assets/sustainable_deepfashion_title.png?raw=true" width=512px/>
 </p>
-Second-hand fashion is in high demand, counter-acting the unethical and destructive nature of  fast-fashion.
+Second-hand fashion is in high demand, counteracting the unethical and destructive nature of fast fashion.
 However, finding your style might be hard, due to the vast amount of different items and sellers.
 Our AI-powered app demonstrates how deep learning can solve this problem, and understands similarities between fashion items.
 

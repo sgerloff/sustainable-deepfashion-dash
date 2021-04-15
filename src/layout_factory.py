@@ -89,14 +89,14 @@ class LayoutFactory:
             dbc.CardBody([
                 html.H5("Concept - What's Happening?"),
                 html.P(
-                    "Using deep-learning, we have trained a model to understand similarity between \
+                    "Using deep learning, we have trained a model to understand the similarity between \
                     short-sleeved tops. \
-                    Comparing an user-provided image to a database comprised of second-hand items, we \
+                    Comparing a user-provided image to a database comprised of second-hand items, we \
                     return the most similar sustainable alternatives. \
-                    Here, similarity refers to the prints, patterns and colors of the item, instead of \
-                    the angle, lighting and crop of the corresponding image. \
-                    Furthermore, we allow users to modify the resulting representations introduce new \
-                    features, like floral patterns, stripes and dots.",
+                    Here, similarity refers to the prints, patterns, and colors of the item, instead of \
+                    the angle, lighting, and crop of the corresponding image. \
+                    Furthermore, we allow users to modify the resulting representations to introduce new \
+                    features, like floral patterns, stripes and, dots.",
                     style={"text-align": "justify"}
                 ),
                 html.H5("Data - Where does it come from?"),
@@ -108,20 +108,20 @@ class LayoutFactory:
                     style={"text-align": "justify"}
                 ),
                 html.P(
-                    "We use data from the Deepfashion2 dataset, pictures taken by ourselves, friends and family, \
+                    "We use data from the Deepfashion2 dataset, pictures from ourselves, friends, and family, \
                     as well as pictures scraped from Vinted (a.k.a. Kleiderkreisel), a popular german platform \
                     for second-hand fashion. \
-                    In total, our dataset contains up to 500.000 pictures of more then 10.000 items, with different \
-                    angles, framing, lighting and so on. \
-                    We have chosen this data to reflect the distribution of images that you could find on the second-\
-                    hand market.",
+                    In total, our dataset contains up to 500.000 pictures of more than 10.000 items, with different \
+                    angles, framing, lighting, and so on. \
+                    This data is chosen to reflect the distribution of images that you could find on the \
+                    second-hand market.",
                     style={"text-align": "justify"}
                 ),
                 html.H5("Model - How does it work?"),
                 html.P(
-                    "Our model is built with a custom architecture, containing five convolutional layers followed \
-                    by three dense layers. From input images the model predicts representation vectors embedded \
-                    into an 20-dimensional latent space. These representations have the property that their angular \
+                    "Our model is built with custom architecture, containing five convolutional layers followed \
+                    by three dense layers. From input images, the model predicts representation vectors embedded \
+                    into a 20-dimensional latent space. These representations have the property that their angular \
                     distances are small if the images contain the same item and large if they differ. \
                     The similarity between two items is then defined accordingly as the distance between the \
                     representations vectors in latent space.",
@@ -129,35 +129,35 @@ class LayoutFactory:
                 ),
                 html.P(
                     "This is achieved by training the model on the semi-hard triplet loss, which we have \
-                    implemented in Tensorflow and trained on GPU's provided by AWS and Google Cloud. \
+                    implemented in Tensorflow and trained on GPUs provided by AWS and Google Cloud. \
                     To find the best performing model, we compare the Top-K Accuracy of the model to retrieve \
-                    the matching item from a validation and test dataset. \
-                    To this end, we have explored pretrained models as feature extractors, different distance \
+                    the matching item from the validation and test dataset. \
+                    To this end, we have explored pre-trained models as feature extractors, different distance \
                     metrics, other dimensionality of the latent space, and more.",
                     style={"text-align": "justify"}
                 ),
                 html.H5("More - Who are we?"),
                 html.P(
                     "We are three Data Scientists, that have met at Data Science Retreat and set out to improve \
-                    the second-hand fashion market. If you have questions, feedback or want to chat, please feel \
+                    the second-hand fashion market. If you have questions, feedback, or want to chat, please feel \
                     free to contact us:",
                     style={"text-align": "justify"}
                 ),
                 html.Ul([
                     html.Li(html.A("Gert-Jan Dobbelaere", href="https://www.linkedin.com/in/gert-jan-dobbelaere/")),
                     html.Li(html.A("Dr. Sascha Gerloff", href="https://www.linkedin.com/in/sascha-gerloff/")),
-                    html.Li(html.A("Sergio Vechi", href="https://www.linkedin.com/in/sergiovechi/"))
+                    html.Li(html.A("Dr. Sergio Vechi", href="https://www.linkedin.com/in/sergiovechi/"))
                 ]),
                 html.P(
-                    "If you want to learn more about the implementation details, or want to incorporate \
-                    some of our results into your own project, you can find all the source code at github:",
+                    "If you want to learn more about the implementation details or want to incorporate \
+                    some of our results into your own project, you can find all the source code at GitHub:",
                     style={"text-align": "justify"}
                 ),
                 html.Ul(html.Li(html.A(
                     "https://github.com/sgerloff/sustainable_deepfashion",
                     href="https://github.com/sgerloff/sustainable_deepfashion"
                 ))),
-                html.P("Interested how the dash app is build? We got you covered:", style={"text-align": "justify"}),
+                html.P("Interested in how the dash app is built? We got you covered:", style={"text-align": "justify"}),
                 html.Ul(html.Li(html.A(
                     "https://github.com/sgerloff/sustainable-deepfashion-dash",
                     href="https://github.com/sgerloff/sustainable-deepfashion-dash"
